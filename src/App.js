@@ -37,6 +37,12 @@ class App extends Component {
     this.setState({ filterState });
   };
 
+  handleClearCompletedItems = () => {
+    const items = this.state.items.filter(item => !item.isChecked);
+
+    this.setState({ items });
+  };
+
   render() {
     let items;
 
@@ -61,6 +67,7 @@ class App extends Component {
         <TodoStats
           items={this.state.items}
           onFilterState={this.handleFilterState}
+          onClearCompletedItems={this.handleClearCompletedItems}
         />
       </div>
     );
