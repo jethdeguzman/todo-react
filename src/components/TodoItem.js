@@ -7,9 +7,16 @@ const TodoItem = props => {
         type="checkbox"
         checked={props.item.isChecked}
         value={props.item.id}
-        onChange={props.onChange}
+        onChange={() => props.onChange(props.item.id)}
       />
-      <span>{props.item.text}</span>
+      <span
+        style={{
+          textDecoration: props.item.isChecked ? "line-through" : "",
+          marginLeft: "2px"
+        }}
+      >
+        {props.item.text}
+      </span>
     </li>
   );
 };

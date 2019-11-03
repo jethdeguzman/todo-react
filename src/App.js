@@ -1,40 +1,25 @@
 import React, { Component } from "react";
 import "./App.css";
-import TodoInput from "./components/TodoInput";
+import TodoForm from "./components/TodoForm";
 import TodoList from "./components/TodoList";
 import TodoStats from "./components/TodoStats";
 
-const generateItemId = () => {
-  const now = new Date();
-  return `${Math.round(now.getTime() / 1000)}`;
-};
-
 class App extends Component {
   state = {
-    text: "",
-    items: []
+    items: [],
+    filterState: "all"
   };
 
-  handleInputSubmit = e => {
-    e.preventDefault();
-    const item = {
-      id: generateItemId(),
-      text: this.state.text,
-      isChecked: false
-    };
-    this.setState({ items: this.state.items.concat(item), text: "" });
+  handleAddItem = item => {
+    this.setState({ items: [item, ...this.state.items] });
   };
 
-  handleInputChange = e => {
-    this.setState({ text: e.target.value });
-  };
-
-  handleItemChange = e => {
+  handleItemChange = id => {
     const items = this.state.items.map(item => {
-      if (item.id !== e.target.value) {
+      if (item.id === id) {
+        item.isChecked = !item.isChecked;
         return item;
       } else {
-        item.isChecked = !item.isChecked;
         return item;
       }
     });
@@ -42,19 +27,31 @@ class App extends Component {
     this.setState({ items });
   };
 
+  handleFilterState = filterState => {
+    this.setState({ filterState });
+  };
+
   render() {
+    let items;
+
+    switch (this.state.filterState) {
+      case "active":
+        items = this.state.items.filter(item => !item.isChecked);
+        break;
+      case "completed":
+        items = this.state.items.filter(item => item.isChecked);
+        break;
+      default:
+        items = this.state.items;
+    }
     return (
       <div>
-        <TodoInput
-          text={this.state.text}
-          onSubmit={this.handleInputSubmit}
-          onChange={this.handleInputChange}
-        />
-        <TodoList
+        <TodoForm onAddItem={this.handleAddItem} />
+        <TodoList items={items} onItemChange={this.handleItemChange} />
+        <TodoStats
           items={this.state.items}
-          onItemChange={this.handleItemChange}
+          onFilterState={this.handleFilterState}
         />
-        <TodoStats items={this.state.items} />
       </div>
     );
   }
